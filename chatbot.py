@@ -12,6 +12,4 @@ fp = open('clean_dwight.txt')
 dwightTrainer.train(fp.readlines())
 fp.close()
 
-print(dwight.get_response('hallo'))
-
 
