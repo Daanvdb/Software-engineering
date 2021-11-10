@@ -6,16 +6,33 @@ Created on Mon Nov  8 11:34:22 2021
 """
 
 from tkinter import *
+from googletrans import Translator
+from chatterbot import ChatBot
 #from chat import get_response, bot_name
+
+translator = Translator()
+
+michael = ChatBot('michael', only_read=True, database_uri='sqlite:///michael.db')
+dwight = ChatBot('dwight', only_read=True, database_uri='sqlite:///dwight.db')
+bot = dwight
 
 BG_GRAY = "#ABB2B9"
 BG_COLOR = "#17202A"
 TEXT_COLOR = "#EAECEE"
+translate = False
 
 FONT = "Helvetica 14"
 FONT_BOLD = "Helvetica 13 bold"
 
+
+def nl_to_en(text_input):
+    return translator.translate(text_input, src='nl', dest='en').text
+
+def en_to_nl(text_input):
+    return translator.translate(text_input, src='en', dest='nl').text
+
 class ChatApplication:
+    
     
     def __init__(self):
         self.window = Tk()
@@ -27,7 +44,7 @@ class ChatApplication:
     def _setup_main_window(self):
         self.window.title("Chat")
         self.window.resizable(width=False, height=False)
-        self.window.configure(width=470, height=550, bg=BG_COLOR)
+        self.window.configure(width=950, height=550, bg=BG_COLOR)
         
         # head label
         head_label = Label(self.window, bg=BG_COLOR, fg=TEXT_COLOR,
@@ -65,10 +82,11 @@ class ChatApplication:
         send_button.place(relx=0.77, rely=0.008, relheight=0.06, relwidth=0.22)
      
     def _on_enter_pressed(self, event):
+        global bot
         msg = self.msg_entry.get()
-        self._insert_message(msg, "You")
+        self._insert_message(msg, "You", bot)
         
-    def _insert_message(self, msg, sender):
+    def _insert_message(self, msg, sender, bot):
         if not msg:
             return
         
@@ -78,10 +96,20 @@ class ChatApplication:
         self.text_widget.insert(END, msg1)
         self.text_widget.configure(state=DISABLED)
         
-        msg2 = f"{bot_name}: {get_response(msg)}\n\n"
-        self.text_widget.configure(state=NORMAL)
-        self.text_widget.insert(END, msg2)
-        self.text_widget.configure(state=DISABLED)
+        if translate:
+            en_msg = nl_to_en(msg)
+            en_response = bot.get_response(en_msg).text
+            nl_response = en_to_nl(en_response)
+            msg2 = bot.name + ": " + nl_response + "\n\n"
+            self.text_widget.configure(state=NORMAL)
+            self.text_widget.insert(END, msg2)
+            self.text_widget.configure(state=DISABLED)
+        
+        else:
+            msg2 = bot.name + ": " + bot.get_response(msg).text + "\n\n"
+            self.text_widget.configure(state=NORMAL)
+            self.text_widget.insert(END, msg2)
+            self.text_widget.configure(state=DISABLED)
         
         self.text_widget.see(END)
              

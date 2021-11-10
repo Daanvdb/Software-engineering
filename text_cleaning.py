@@ -1,7 +1,7 @@
 michael_txt = []
 dwight_txt = []
 
-with open('dwight.txt', encoding = 'utf-8') as fp:
+with open('michael.txt', encoding = 'utf-8') as fp:
     while True:
         buffer = fp.readline()
         if buffer == '':
@@ -29,7 +29,7 @@ for i, j in enumerate(dwight_txt):
     if ':' in j:
         dwight_txt[i] = j.split(':')[1]
 
-fp = open('clean_dwight.txt', 'a+')
+fp = open('clean_michael.txt', 'a+')
 
 for i in dwight_txt:
     fp.write(i)
