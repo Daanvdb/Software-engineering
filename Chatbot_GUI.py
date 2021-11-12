@@ -19,7 +19,7 @@ bot = dwight
 BG_GRAY = "#ABB2B9"
 BG_COLOR = "#17202A"
 TEXT_COLOR = "#EAECEE"
-translate = False
+translateT = False
 
 FONT = "Helvetica 14"
 FONT_BOLD = "Helvetica 13 bold"
@@ -40,6 +40,26 @@ class ChatApplication:
         
     def run(self):
         self.window.mainloop()
+
+    def _change_language(self, Event):                                       # _change_language and _change_personality have to be declared before declaring the buttons
+        global translateT                                                    # otherwise it might rise an error or get stuck in a loop
+        if translateT == True:
+            self.trans_button.config(text="NL")
+            translateT = False
+        else:
+            self.trans_button.config(text="EN")
+            translateT = True
+
+    def _change_personality(self,Event):
+        b = 2
+        global bot
+        if bot==dwight:
+            self.bot_pers.config(text="Dwight")
+            bot = michael
+        else:
+            self.bot_pers.config(text="Michael")
+            bot = dwight
+
         
     def _setup_main_window(self):
         self.window.title("Chat")
@@ -80,6 +100,18 @@ class ChatApplication:
         send_button = Button(bottom_label, text="Send", font=FONT_BOLD, width=20, bg=BG_GRAY,
                              command=lambda: self._on_enter_pressed(None))
         send_button.place(relx=0.77, rely=0.008, relheight=0.06, relwidth=0.22)
+
+    
+
+        # translate button
+        self.trans_button = Button(head_label, text="NL", font=FONT_BOLD, width=4, bg=BG_GRAY,
+                             command= lambda: self._change_language(None))
+        self.trans_button.place(x=890,y=0)
+
+        #Bot personality
+        self.bot_pers = Button(head_label, text="Michael", font=FONT_BOLD, width=6, bg=BG_GRAY,
+                             command= lambda: self._change_personality(None))
+        self.bot_pers.place(x=800,y=0)
      
     def _on_enter_pressed(self, event):
         global bot
@@ -87,8 +119,11 @@ class ChatApplication:
         self._insert_message(msg, "You", bot)
         
     def _insert_message(self, msg, sender, bot):
+        global translateT
         if not msg:
             return
+
+    
         
         self.msg_entry.delete(0, END)
         msg1 = f"{sender}: {msg}\n\n"
@@ -96,7 +131,7 @@ class ChatApplication:
         self.text_widget.insert(END, msg1)
         self.text_widget.configure(state=DISABLED)
         
-        if translate:
+        if translateT:
             en_msg = nl_to_en(msg)
             en_response = bot.get_response(en_msg).text
             nl_response = en_to_nl(en_response)
