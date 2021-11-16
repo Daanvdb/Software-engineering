@@ -4,7 +4,6 @@ Created on Mon Nov  8 11:34:22 2021
 
 @author: btych
 """
-
 from tkinter import *
 from googletrans import Translator
 from chatterbot import ChatBot
