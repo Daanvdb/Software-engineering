@@ -74,7 +74,7 @@ class ChatApplication:
         self.msg_entry.insert(1,"abc")
         self.send_button.invoke()
         x=0
-        if "abc" in self.text_widget.get(0.0,END):
+        if "You: abc" in self.text_widget.get(0.0,END):
             msg = "Send button text successful"
             self._insert_message(msg, "Unit Test", bot)
         
